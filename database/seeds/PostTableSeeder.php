@@ -28,7 +28,8 @@ class PostTableSeeder extends Seeder
                 'slug' => $faker->slug(),
                 'image' => rand(0,1) == 1 ? $image : null,
                 'created_at' => $created_date,
-                'published_at' => $i < 5 ? $published_date : (rand(0,1) == 0 ? NULL : $published_date->addDays(4+$i))
+                'published_at' => $i < 5 ? $published_date : (rand(0,1) == 0 ? NULL : $published_date->addDays(4+$i)),
+                'category_id' => rand(1,4)
 
             ];
         }

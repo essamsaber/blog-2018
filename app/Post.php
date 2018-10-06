@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -24,6 +25,16 @@ class Post extends Model
         return $this->published_at->diffForHumans();
     }
 
+    public function getBodyHtmlAttribute($value)
+    {
+        return $this->body ? Markdown::convertToHtml(e($this->body)) : '';
+    }
+
+    public function getExcerptHtmlAttribute($value)
+    {
+        return $this->excerpt ? Markdown::convertToHtml(e($this->excerpt)) : '';
+    }
+
     public function scopeLatestFirst($query)
     {
         return $query->orderBy('id', 'DESC');
@@ -34,6 +45,10 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
     public function scopePublished($query)
     {
         return $query->where('published_at', '<=', Carbon::now());
@@ -41,6 +56,6 @@ class Post extends Model
 
     public function postUrl()
     {
-        return route('blog.show', $this->id);
+        return route('blog.show', $this->slug);
     }
 }

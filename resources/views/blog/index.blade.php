@@ -14,7 +14,7 @@
                         <div class="post-item-body">
                             <div class="padding-10">
                                 <h2><a href="{{$post->postUrl()}}">{{$post->title}}</a></h2>
-                                <p>{{$post->excerpt}}</p>
+                                <p>{!! $post->excerpt_html !!}</p>
                             </div>
 
                             <div class="post-meta padding-10 clearfix">
@@ -22,7 +22,7 @@
                                     <ul class="post-meta-group">
                                         <li><i class="fa fa-user"></i><a href="#"> {{$post->author->name}}</a></li>
                                         <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
-                                        <li><i class="fa fa-tags"></i><a href="#"> Blog</a></li>
+                                        <li><i class="fa fa-file"></i><a href="{{route('blog.category',$post->category)}}"> {{$post->category->name}}</a></li>
                                         <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
                                     </ul>
                                 </div>
