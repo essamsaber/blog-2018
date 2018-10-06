@@ -38,4 +38,9 @@ class Post extends Model
     {
         return $query->where('published_at', '<=', Carbon::now());
     }
+
+    public function postUrl()
+    {
+        return route('blog.show', $this->id);
+    }
 }

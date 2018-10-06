@@ -8,14 +8,12 @@
                     <article class="post-item">
                         @if($post->image_url)
                         <div class="post-item-image">
-                                <a href="post.html">
-                                    <img src="{{$post->image_url}}" alt="">
-                                </a>
-                            </div>
+                            <img src="{{$post->image_url}}" alt="">
+                        </div>
                         @endif
                         <div class="post-item-body">
                             <div class="padding-10">
-                                <h2><a href="post.html">{{$post->title}}</a></h2>
+                                <h2><a href="{{$post->postUrl()}}">{{$post->title}}</a></h2>
                                 <p>{{$post->excerpt}}</p>
                             </div>
 
@@ -29,7 +27,7 @@
                                     </ul>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="post.html">Continue Reading &raquo;</a>
+                                    <a href="{{$post->postUrl()}}">Continue Reading &raquo;</a>
                                 </div>
                             </div>
                         </div>
