@@ -13,23 +13,29 @@ class UserTableSeeder extends Seeder
     {
         \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0');
         \Illuminate\Support\Facades\DB::table('users')->truncate();
-
+        $faker = \Faker\Factory::create();
         \Illuminate\Support\Facades\DB::table('users')->insert(
             [
                 [
-                    'name' => 'Essam',
+                    'name' => 'Essam Saber',
                     'email' => 'root.esso@gmail.com',
-                    'password' => bcrypt(123)
+                    'password' => bcrypt(123),
+                    'slug' => str_slug('Essam Saber'),
+                    'bio' => $faker->text(rand(100,200))
                 ],
                 [
-                    'name' => 'Moneim',
+                    'name' => 'Moneim Saber',
                     'email' => 'moneim@gmail.com',
-                    'password' => bcrypt(123)
+                    'password' => bcrypt(123),
+                    'slug' => str_slug('Moneim Saber'),
+                    'bio' => $faker->text(rand(100,200))
                 ],
                 [
-                    'name' => 'Ahmed',
+                    'name' => 'Ahmed Mohamed',
                     'email' => 'ahmed@gmail.com',
-                    'password' => bcrypt(123)
+                    'password' => bcrypt(123),
+                    'slug' => str_slug('Ahmed Mohamed'),
+                    'bio' => $faker->text(rand(100,200))
                 ],
             ]
         );

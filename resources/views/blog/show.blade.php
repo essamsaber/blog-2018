@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
+    @php $author = $post->author; @endphp
     <div class="container">
         <div class="row">
             <div class="col-md-8">
@@ -18,8 +19,8 @@
 
                             <div class="post-meta no-border">
                                 <ul class="post-meta-group">
-                                    <li><i class="fa fa-user"></i><a href="#"> {{$post->author->name}}</a></li>
-                                    <li><i class="fa fa-clock-o"></i><time> February 12, 2016</time></li>
+                                    <li><i class="fa fa-user"></i><a href="{{route('blog.author', $author)}}"> {{$author->name}}</a></li>
+                                    <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                     <li><i class="fa fa-folder"></i><a href="#"> {{$post->category->name}}</a></li>
                                     <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
                                 </ul>
@@ -33,19 +34,20 @@
                 <article class="post-author padding-10">
                     <div class="media">
                         <div class="media-left">
-                            <a href="#">
-                                <img alt="Author 1" src="/img/author.jpg" class="media-object">
+                            <a href="{{route('blog.author', $author)}}">
+                                <img alt="Author 1" src="{{asset('public/img/author.jpg')}}" class="media-object">
                             </a>
                         </div>
                         <div class="media-body">
-                            <h4 class="media-heading"><a href="#">{{$post->author->name}}</a></h4>
+                            <h4 class="media-heading"><a href="{{route('blog.author', $author)}}">{{$author->name}}</a></h4>
                             <div class="post-author-count">
-                                <a href="#">
+                                <a href="{{route('blog.author', $author)}}">
                                     <i class="fa fa-clone"></i>
-                                    90 posts
+                                    @php $posts_count = $author->posts()->published()->count() @endphp
+                                    {{$posts_count}} {{str_plural('post', $posts_count)}}
                                 </a>
                             </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis ad aut sunt cum, mollitia excepturi neque sint magnam minus aliquam, voluptatem, labore quis praesentium eum quae dolorum temporibus consequuntur! Non.</p>
+                            <p>{!! $author->bio_html !!}</p>
                         </div>
                     </div>
                 </article>

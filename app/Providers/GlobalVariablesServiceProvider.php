@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use App\Category;
+use App\Views\Composer\SidebarComposer;
 use Illuminate\Support\ServiceProvider;
+
 
 class GlobalVariablesServiceProvider extends ServiceProvider
 {
@@ -14,14 +15,7 @@ class GlobalVariablesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->composer('layouts.sidebar', function($view){
-            $categories = Category::with(['posts' => function($query){
-                return $query->published();
-            }])
-                ->orderBy('name', 'ASC')
-                ->get();
-           return $view->with('categories', $categories);
-        });
+        view()->composer('layouts.sidebar', SidebarComposer::class);
     }
 
     /**
