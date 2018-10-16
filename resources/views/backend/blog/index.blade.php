@@ -18,9 +18,14 @@
                 <div class="box">
                     <div class="box-header">
                         <div class="pull-left">
-                            <a href="{{route('backend.blog.create')}}" class="btn btn-success">Create New</a>
+                            <a href="{{route('backend.blog.create')}}" class="btn btn-success"><i class="fa fa-plus"></i> Create New</a>
                         </div>
                     </div>
+                    @if(session('success'))
+                        <div class="alert alert-info">
+                            {{session('success')}}
+                        </div>
+                    @endif
                     @if(! $posts->count())
                         <div class="alert alert-danger">
                             <strong>No records</strong>

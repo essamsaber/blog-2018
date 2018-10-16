@@ -10,7 +10,7 @@ class Post extends Model
 {
     protected $appends = ['image_url'];
     protected $dates = ['published_at'];
-
+    protected $fillable = ['title','slug','excerpt','body','category_id', 'published_at','image'];
     public function getImageUrlAttribute()
     {
         $image_url = '';
@@ -26,8 +26,8 @@ class Post extends Model
         $image_url = '';
         if($this->image) {
             $ext = substr(strrchr($this->image, '.'),1);
-            $thumbnail = str_replace(".{$ext}", "_thumb.{$ext}", $this->image);
-            $image_path = public_path('img').'/'.$thumbnail;
+            $thumbnail = str_replace(".{$ext}", "_thumbnail.{$ext}", $this->image);
+            $image_path = public_path(config('cms.image.dir')).'/'.$thumbnail;
             if(file_exists($image_path)) $image_url = asset('public/img').'/'.$thumbnail;
         }
         return $image_url;
@@ -93,5 +93,10 @@ class Post extends Model
         } else {
             return '<span class="label label-success">Published</span>';
         }
+    }
+
+    public function setPublishedAtAttribute($value)
+    {
+        $this->attributes['published_at'] = $value ?: NULL;
     }
 }
