@@ -20,17 +20,40 @@ class BlogController extends Controller
 
     public function index(Request $request)
     {
+        $allPosts = TRUE;
         if( $request->status && $request->status == 'trashed') {
+            $allPosts = false;
             $posts = Post::onlyTrashed()->with('author','category')->latest()->paginate($this->limit);
             $postCount = Post::count();
-            $allPosts = FALSE;
+        } else if($request->status && $request->status == 'scheduled'){
+            $posts = Post::scheduled()->with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::scheduled()->count();
+        }
+        else if($request->status && $request->status == 'published'){
+            $posts = Post::published()->with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::published()->count();
+        }
+        else if($request->status && $request->status == 'draft'){
+            $posts = Post::draft()->with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::draft()->count();
         } else {
             $posts = Post::with('author','category')->latest()->paginate($this->limit);
             $postCount = Post::count();
-            $allPosts = TRUE;
         }
+        $filterLists = $this->filtersList();
 
-        return view('backend.blog.index',compact('posts','postCount','allPosts'));
+        return view('backend.blog.index',compact('posts','postCount','allPosts','filterLists'));
+    }
+
+    private function filtersList()
+    {
+        return [
+          'all' => Post::withoutTrashed()->count(),
+          'published' => Post::published()->count(),
+          'scheduled'  => Post::scheduled()->count(),
+          'draft' => Post::draft()->count(),
+          'trashed' => Post::onlyTrashed()->count()
+        ];
     }
 
     public function create(Post $post)

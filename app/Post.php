@@ -14,6 +14,7 @@ class Post extends Model
     protected $appends = ['image_url'];
     protected $dates = ['published_at','deleted_at'];
     protected $fillable = ['title','slug','excerpt','body','category_id', 'published_at','image'];
+
     public function getImageUrlAttribute()
     {
         $image_url = '';
@@ -51,10 +52,6 @@ class Post extends Model
         return $this->excerpt ? Markdown::convertToHtml(e($this->excerpt)) : '';
     }
 
-    public function scopeLatestFirst($query)
-    {
-        return $query->orderBy('id', 'DESC');
-    }
 
     public function author()
     {
@@ -65,15 +62,7 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function scopePublished($query)
-    {
-        return $query->where('published_at', '<=', Carbon::now());
-    }
 
-    public function scopePopular($query)
-    {
-        return $query->orderBy('view_count', 'DESC');
-    }
 
     public function postUrl()
     {
@@ -101,5 +90,32 @@ class Post extends Model
     public function setPublishedAtAttribute($value)
     {
         $this->attributes['published_at'] = $value ?: NULL;
+    }
+
+
+    public function scopeLatestFirst($query)
+    {
+        return $query->orderBy('id', 'DESC');
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('published_at', '<=', Carbon::now());
+    }
+
+    public function scopePopular($query)
+    {
+        return $query->orderBy('view_count', 'DESC');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->whereNull('published_at');
+    }
+
+
+    public function scopeScheduled($query)
+    {
+        return $query->where('published_at', '>', Carbon::now());
     }
 }

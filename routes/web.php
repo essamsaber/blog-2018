@@ -24,5 +24,6 @@ Route::group(['prefix' => 'backend', 'as' => 'backend.'], function(){
     Route::put('blog/restore/{blog}', 'Backend\BlogController@restore')->name('blog.restore');
     Route::delete('blog/force-delete/{blog}', 'Backend\BlogController@forceDelete')->name('blog.force-delete');
     Route::resource('blog', 'Backend\BlogController');
+    Route::resource('categories', 'Backend\CategoriesController');
 });
 
