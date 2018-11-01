@@ -18,11 +18,19 @@ class BlogController extends Controller
         $this->upload_path = public_path(config('cms.image.dir'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with('author','category')->latest()->paginate($this->limit);
-        $postCount = Post::count();
-        return view('backend.blog.index',compact('posts','postCount'));
+        if( $request->status && $request->status == 'trashed') {
+            $posts = Post::onlyTrashed()->with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::count();
+            $allPosts = FALSE;
+        } else {
+            $posts = Post::with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::count();
+            $allPosts = TRUE;
+        }
+
+        return view('backend.blog.index',compact('posts','postCount','allPosts'));
     }
 
     public function create(Post $post)
@@ -43,21 +51,82 @@ class BlogController extends Controller
         if($request->hasFile('image')) {
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $file_name = time().'.'.$extension;
+            $file_name = time();
+            $file_name_with_ext = $file_name.'.'.$extension;
             $destination = $this->upload_path;
 
-            $image_uploaded = $file->move($destination, $file_name);
+            $image_uploaded = $file->move($destination, $file_name_with_ext);
             if($image_uploaded) {
-                $thumbnail = $destination.'/'.'thumbnail_'.$file_name;
+                $thumbnail = $destination.'/'.$file_name.'_thumbnail.'.$extension;
                 $width = config('cms.image.thumbnail.width');
                 $height = config('cms.image.thumbnail.height');
 
-                Image::make($destination.'/'.$file_name)
+                Image::make($destination.'/'.$file_name_with_ext)
                     ->resize($width, $height)
                     ->save($thumbnail);
             }
-            $data['image'] = $file_name;
+            $data['image'] = $file_name_with_ext;
         }
         return $data;
+    }
+
+    public function edit($id)
+    {
+        $post = Post::findOrFail($id);
+        return view('backend.blog.edit', compact('post'));
+    }
+
+    public function update(PostRequest $request, $id)
+    {
+        $post = Post::findOrFail($id);
+        $data = $this->handleRequest($request);
+
+        $old_image = $post->image;
+        $post->update($data);
+        if($old_image != $post->image) {
+            $this->deleteImage($old_image);
+        }
+        return redirect()
+            ->route('backend.blog.index')
+            ->with('success', 'The blog has been updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        Post::findOrFail($id)->delete();
+        return redirect()
+            ->route('backend.blog.index')
+            ->with('trash-message', ['Your post was deleted successfully!', $id]);
+    }
+
+    public function forceDelete($id)
+    {
+        $post = Post::withTrashed()->findOrFail($id);
+        $this->deleteImage($post->image);
+        $post->forceDelete();
+        $redirectToUrl = route('backend.blog.index').'?status=trashed';
+        return redirect($redirectToUrl)
+            ->with('success', 'Your post was deleted successfully!');
+    }
+
+    public function restore($id)
+    {
+        $post = Post::withTrashed()->findOrFail($id);
+        $post->restore();
+        return redirect()
+            ->back()
+            ->with('success', 'The blog has been restored successfully');
+    }
+
+    private function deleteImage($image)
+    {
+        if($image) {
+            $image_path = $this->upload_path.'/'.$image;
+            $ext = substr(strrchr($image, '.'),1);
+            $thumbnail = str_replace(".{$ext}", "_thumbnail.{$ext}", $image);
+            $thumbnail_path = $this->upload_path.'/'.$thumbnail;
+            if(file_exists($image_path))    unlink($image_path);
+            if(file_exists($thumbnail_path))    unlink($thumbnail_path);
+        }
     }
 }

@@ -16,16 +16,15 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
-                    <div class="box-header">
+                    <div class="box-header clearfix">
                         <div class="pull-left">
                             <a href="{{route('backend.blog.create')}}" class="btn btn-success"><i class="fa fa-plus"></i> Create New</a>
                         </div>
-                    </div>
-                    @if(session('success'))
-                        <div class="alert alert-info">
-                            {{session('success')}}
+                        <div class="pull-right">
+                            <a href="?status=all">All</a> | <a href="?status=trashed">Trashed</a>
                         </div>
-                    @endif
+                    </div>
+                    @include('backend.blog.message')
                     @if(! $posts->count())
                         <div class="alert alert-danger">
                             <strong>No records</strong>
@@ -33,36 +32,11 @@
                     @else
                         <!-- /.box-header -->
                         <div class="box-body ">
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Action</th>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Category</th>
-                                    <th>Date</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($posts as $post)
-                                    <tr>
-                                        <td>
-                                            <a href="#" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
-                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></a>
-                                        </td>
-                                        <td>{{$post->title}}</td>
-                                        <td>{{$post->author->name}}</td>
-                                        <td>{{$post->category->name}}</td>
-                                        <td>
-                                            <abbr title="{{$post->formattedDate(true)}}">
-                                                {{$post->formattedDate()}}
-                                            </abbr> |
-                                            {!! $post->publishedLabel() !!}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                            @if($allPosts)
+                                @include('backend.blog.table')
+                            @else
+                                @include('backend.blog.trash-table')
+                            @endif
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer clearfix">
