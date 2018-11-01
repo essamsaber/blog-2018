@@ -6,6 +6,7 @@ use App\Http\Requests\PostRequest;
 use App\Post;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
+use App\Http\Controllers\Backend\BaseController as Controller;
 
 class BlogController extends Controller
 {

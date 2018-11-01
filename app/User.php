@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','slug'
     ];
 
     /**
@@ -28,6 +28,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        if(!is_null($value)) {
+            $this->attributes['password'] =  bcrypt($value);
+        }
+    }
 
     public function posts()
     {

@@ -25,7 +25,7 @@
                    @else
                         {!! Form::submit('Save', ['class' => 'btn btn-primary', 'id' => 'save']) !!}
                    @endif
-                        {!! Form::submit('cancel', ['class' => 'btn btn-default']) !!}
+                       <a class="btn btn-default" href="{{route('backend.categories.index')}}"><i class="fa fa-backward">Back</i></a>
                 </div>
             </div>
 

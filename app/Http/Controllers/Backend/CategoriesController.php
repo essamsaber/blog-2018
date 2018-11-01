@@ -6,8 +6,7 @@ use App\Category;
 use App\Http\Requests\DestroyCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Backend\BaseController as Controller;
 
 class CategoriesController extends Controller
 {

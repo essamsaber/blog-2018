@@ -25,5 +25,7 @@ Route::group(['prefix' => 'backend', 'as' => 'backend.'], function(){
     Route::delete('blog/force-delete/{blog}', 'Backend\BlogController@forceDelete')->name('blog.force-delete');
     Route::resource('blog', 'Backend\BlogController');
     Route::resource('categories', 'Backend\CategoriesController');
+    Route::resource('users', 'Backend\UsersController');
+    Route::get('users/{id}/confirm-delete', 'Backend\UsersController@confirmDelete')->name('users.confirm-delete');
 });
 

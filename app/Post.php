@@ -13,7 +13,7 @@ class Post extends Model
 
     protected $appends = ['image_url'];
     protected $dates = ['published_at','deleted_at'];
-    protected $fillable = ['title','slug','excerpt','body','category_id', 'published_at','image'];
+    protected $fillable = ['title','slug','excerpt','body','category_id', 'published_at','image','author_id'];
 
     public function getImageUrlAttribute()
     {
