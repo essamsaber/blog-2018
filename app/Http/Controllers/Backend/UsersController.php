@@ -6,9 +6,12 @@ use App\Http\Requests\DestroyUserRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Controllers\Backend\BaseController as Controller;
+use App\Http\Traits\BlogUtilities;
 use App\User;
 class UsersController extends Controller
 {
+    use BlogUtilities;
+
     protected $limit = 5;
 
     public function index()
@@ -57,7 +60,10 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
 
         if($delete_option == 'delete') {
-            $user->posts()->withTrashed()->forceDelete();
+            $user->posts()->withTrashed()->each(function($post){
+                $this->deleteImage($post->image);
+                $post->forceDelete();
+            });
         } else {
             $user->posts()->withTrashed()
                 ->update(['author_id' => $selected_user]);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Traits\BlogUtilities;
 use App\Post;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Backend\BaseController as Controller;
 
 class BlogController extends Controller
 {
+    use BlogUtilities;
     protected $limit = 5;
     protected $upload_path;
 
@@ -142,15 +144,5 @@ class BlogController extends Controller
             ->with('success', 'The blog has been restored successfully');
     }
 
-    private function deleteImage($image)
-    {
-        if($image) {
-            $image_path = $this->upload_path.'/'.$image;
-            $ext = substr(strrchr($image, '.'),1);
-            $thumbnail = str_replace(".{$ext}", "_thumbnail.{$ext}", $image);
-            $thumbnail_path = $this->upload_path.'/'.$thumbnail;
-            if(file_exists($image_path))    unlink($image_path);
-            if(file_exists($thumbnail_path))    unlink($thumbnail_path);
-        }
-    }
+
 }
