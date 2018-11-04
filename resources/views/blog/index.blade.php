@@ -23,7 +23,7 @@
                         <article class="post-item">
                             @if($post->image_url)
                                 <div class="post-item-image">
-                                    <img src="{{$post->image_url}}" alt="">
+                                    <img width="600" height="400" src="{{$post->image_url}}" alt="">
                                 </div>
                             @endif
                             <div class="post-item-body">

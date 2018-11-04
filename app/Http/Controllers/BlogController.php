@@ -16,6 +16,7 @@ class BlogController extends Controller
             ->with('category')
             ->latestFirst()
             ->published()
+            ->filter(request("term"))
             ->simplePaginate($this->limit);
         return view('blog.index', compact('posts','categories'));
     }

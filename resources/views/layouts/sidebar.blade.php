@@ -1,16 +1,17 @@
 <div class="col-md-4">
     <aside class="right-sidebar">
-        {{--<div class="search-widget">--}}
-            {{--<div class="input-group">--}}
-                {{--<input type="text" class="form-control input-lg" placeholder="Search for...">--}}
-                {{--<span class="input-group-btn">--}}
-                            {{--<button class="btn btn-lg btn-default" type="button">--}}
-                                {{--<i class="fa fa-search"></i>--}}
-                            {{--</button>--}}
-                          {{--</span>--}}
-            {{--</div><!-- /input-group -->--}}
-        {{--</div>--}}
-
+        <form action="{{route('blog')}}" method="GET">
+            <div class="search-widget">
+                <div class="input-group">
+                    <input type="text" class="form-control input-lg" name="term" placeholder="Search for...">
+                    <span class="input-group-btn">
+                            <button class="btn btn-lg btn-default" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                          </span>
+                </div><!-- /input-group -->
+            </div>
+        </form>
         <div class="widget">
             <div class="widget-heading">
                 <h4>Categories</h4>
