@@ -6,9 +6,11 @@ use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Authenticatable
 {
+    use LaratrustUserTrait;
     use Notifiable;
 
     /**
@@ -51,6 +53,10 @@ class User extends Authenticatable
         return Markdown::convertToHtml(e($this->bio));
     }
 
+    public function getRoleNameAttribute($value)
+    {
+        return $this->roles->first()->display_name ?? '';
+    }
     public function gravatar()
     {
         return asset('public/backend/img/avatar.png');

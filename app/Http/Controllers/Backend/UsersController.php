@@ -37,7 +37,8 @@ class UsersController extends Controller
     {
         $user = User::findOrFail($id);
         $user->update($request->all());
-
+        $user->detachRoles();
+        $user->attachRole($request->role);
         return redirect()
             ->route('backend.users.index')
             ->with('success', 'Your User has been updated successfully!');
@@ -47,7 +48,8 @@ class UsersController extends Controller
     {
         $data = $request->all();
         $data['slug'] = str_slug($request->name);
-        User::create($data);
+        $user = User::create($data);
+        $user->attachRole($request->role);
         return redirect()
             ->route('backend.users.index')
             ->with('success', 'New User has been added successfully!');

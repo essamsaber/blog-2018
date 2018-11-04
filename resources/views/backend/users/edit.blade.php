@@ -15,7 +15,12 @@
     </section>
     <section class="content">
         <div class="row">
-        {!! Form::model($user, ['route' => ['backend.users.update', $user->id], 'files' => true, 'method' => 'put', 'id' => 'users-form']) !!}
+
+        @if(isset($userProfile))
+            {!! Form::model($user, ['url' => ['backend/profile'], 'files' => true, 'method' => 'put', 'id' => 'users-form']) !!}
+        @else
+            {!! Form::model($user, ['route' => ['backend.users.update', $user->id], 'files' => true, 'method' => 'put', 'id' => 'users-form']) !!}
+        @endif
         @include('backend.users.form')
         {!! Form::close() !!}            <!-- ./row -->
 

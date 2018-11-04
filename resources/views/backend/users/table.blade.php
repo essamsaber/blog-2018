@@ -20,8 +20,8 @@
                 @endif
             </td>
             <td>{{$user->name}}</td>
-            <td>{{$user->posts->count()}}</td>
-            <td>-</td>
+            <td>{{$user->email}}</td>
+            <td>{{$user->role_name}}</td>
             
         </tr>
     @endforeach

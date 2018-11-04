@@ -21,6 +21,8 @@ class BlogController extends Controller
         $this->upload_path = public_path(config('cms.image.dir'));
     }
 
+
+
     public function index(Request $request)
     {
         $allPosts = TRUE;
@@ -30,6 +32,10 @@ class BlogController extends Controller
             $postCount = Post::count();
         } else if($request->status && $request->status == 'scheduled'){
             $posts = Post::scheduled()->with('author','category')->latest()->paginate($this->limit);
+            $postCount = Post::scheduled()->count();
+        }
+        else if($request->status && $request->status == 'own'){
+            $posts = $request->user()->posts()->latest()->paginate($this->limit);
             $postCount = Post::scheduled()->count();
         }
         else if($request->status && $request->status == 'published'){
@@ -43,19 +49,20 @@ class BlogController extends Controller
             $posts = Post::with('author','category')->latest()->paginate($this->limit);
             $postCount = Post::count();
         }
-        $filterLists = $this->filtersList();
+        $filterLists = $this->filtersList($request);
 
         return view('backend.blog.index',compact('posts','postCount','allPosts','filterLists'));
     }
 
-    private function filtersList()
+    private function filtersList($request)
     {
         return [
           'all' => Post::withoutTrashed()->count(),
           'published' => Post::published()->count(),
           'scheduled'  => Post::scheduled()->count(),
           'draft' => Post::draft()->count(),
-          'trashed' => Post::onlyTrashed()->count()
+          'trashed' => Post::onlyTrashed()->count(),
+          'own' => $request->user()->posts()->count()
         ];
     }
 

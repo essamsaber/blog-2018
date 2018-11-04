@@ -11,5 +11,6 @@ class BaseController extends Controller
     {
 
         $this->middleware('auth');
+        $this->middleware('check-permissions');
     }
 }

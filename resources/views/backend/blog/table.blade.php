@@ -10,14 +10,24 @@
     </thead>
     <tbody>
     @foreach($posts as $post)
+        <?php $request = request(); ?>
         <tr>
             <td>
                 {!! Form::open(['method' => 'DELETE', 'route' => ['backend.blog.destroy', $post->id]]) !!}
+                @if(check_user_permission($request, 'Blog@edit', $post->id))
                 <a href="{{route('backend.blog.edit', $post->id)}}" class="btn btn-xs btn-default">
                     <i class="fa fa-edit"></i>
                 </a>
-
-                <button class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>
+                @else
+                    <a href="#" disabled="disabled" class="btn btn-xs btn-default">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                @endif
+                @if(check_user_permission($request, 'Blog@edit', $post->id))
+                    <button class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>
+                @else
+                    <button disabled="disabled" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>
+                @endif
                 {!! Form::close() !!}
             </td>
             <td>{{$post->title}}</td>

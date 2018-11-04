@@ -26,6 +26,8 @@ Route::group(['prefix' => 'backend', 'as' => 'backend.'], function(){
     Route::resource('blog', 'Backend\BlogController');
     Route::resource('categories', 'Backend\CategoriesController');
     Route::resource('users', 'Backend\UsersController');
+    Route::get('profile', 'Backend\HomeController@editProfile');
+    Route::put('profile', 'Backend\HomeController@updateProfile');
     Route::get('users/{id}/confirm-delete', 'Backend\UsersController@confirmDelete')->name('users.confirm-delete');
 });
 

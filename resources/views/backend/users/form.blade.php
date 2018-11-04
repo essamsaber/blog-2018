@@ -34,21 +34,26 @@
                 @endif
             </div>
 
-            {{--<div class="form-group {{$errors->has('bio') ? 'has-error' : ''}}">--}}
-                {{--{!! Form::label('Bio') !!}--}}
-                {{--{!! Form::textarea('bio', null,['class' => 'form-control', 'id' => 'bio']) !!}--}}
-                {{--@if($errors->has('bio'))--}}
-                    {{--<span class="help-block">{{$errors->first('bio')}}</span>--}}
-                {{--@endif--}}
-            {{--</div>--}}
+            <div class="form-group {{$errors->has('role') ? 'has-error' : ''}}">
+                {!! Form::label('Role') !!}
+                @if(auth()->id() == $user->id && auth()->id() == config('cms.default_user_id') || isset($userProfile))
+                    <p class="form-control-static">{{$user->role_name}}</p>
+                    {!! Form::hidden('role', auth()->user()->roles()->first()->id) !!}
+                @else
+                    {!! Form::select('role',\App\Role::pluck('name', 'id'),$user->exists ? $user->roles->first()->id: null , ['class' => 'form-control', 'id' => 'role']) !!}
+                @endif
+                @if($errors->has('role'))
+                    <span class="help-block">{{$errors->first('role')}}</span>
+                @endif
+            </div>
 
             <!-- /.box-body -->
             <div class="box-header">
                 <div class="box-footer clearfix">
-                   @if($user->exists())
-                        {!! Form::submit('Save', ['class' => 'btn btn-primary', 'id' => 'save']) !!}
-                   @else
+                   @if($user->exists)
                         {!! Form::submit('Update', ['class' => 'btn btn-primary', 'id' => 'save']) !!}
+                   @else
+                        {!! Form::submit('Save', ['class' => 'btn btn-primary', 'id' => 'save']) !!}
                    @endif
                        <a class="btn btn-default" href="{{route('backend.users.index')}}"><i class="fa fa-arrow-circle-left"> Back</i></a>
                 </div>
