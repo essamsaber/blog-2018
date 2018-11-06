@@ -130,4 +130,18 @@ class Post extends Model
             });
         }
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'post_tag');
+    }
+
+    public function getHtmlTagsAttribute()
+    {
+        $html = [];
+        foreach($this->tags as $tag) {
+            $html[] = '<a href="#">'.$tag->name.'</a>';
+        }
+        return implode(', ',$html);
+    }
 }

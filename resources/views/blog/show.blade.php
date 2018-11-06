@@ -22,6 +22,7 @@
                                     <li><i class="fa fa-user"></i><a href="{{route('blog.author', $author)}}"> {{$author->name}}</a></li>
                                     <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                     <li><i class="fa fa-folder"></i><a href="#"> {{$post->category->name}}</a></li>
+                                    <li><i class="fa fa-tags"></i>{!! $post->html_tags !!}</li>
                                     <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
                                 </ul>
                             </div>

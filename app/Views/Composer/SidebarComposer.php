@@ -11,6 +11,7 @@ namespace App\Views\Composer;
 
 use App\Category;
 use App\Post;
+use App\Tag;
 use Illuminate\View\View;
 
 class SidebarComposer
@@ -19,6 +20,7 @@ class SidebarComposer
     {
         $this->composeCategories($view);
         $this->composePopularPosts($view);
+        $this->composeTags($view);
     }
 
     private function composeCategories($view)
@@ -35,5 +37,11 @@ class SidebarComposer
     {
         $popular_posts = Post::published()->popular()->take(3)->get();
         $view->with('popular_posts', $popular_posts);
+    }
+
+    private function composeTags($view)
+    {
+        $tags = Tag::has('posts')->get();
+        $view->with('tags', $tags);
     }
 }

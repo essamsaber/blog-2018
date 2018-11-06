@@ -4,21 +4,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
+                @include('blog.messages')
                 @if(!$posts->count())
                     <div class="alert alert-warning">
                         No posts !
                     </div>
                 @else
-                    @if(isset($category_name))
-                       <div class="alert alert-info">
-                           <strong>{{$category_name}}</strong>
-                       </div>
-                    @endif
-                    @if(isset($author_name))
-                        <div class="alert alert-info">
-                            <strong>{{$author_name}}</strong>
-                        </div>
-                    @endif
                     @foreach($posts as $post)
                         <article class="post-item">
                             @if($post->image_url)
@@ -38,6 +29,7 @@
                                             <li><i class="fa fa-user"></i><a href="{{route('blog.author',$post->author)}}"> {{$post->author->name}}</a></li>
                                             <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                             <li><i class="fa fa-file"></i><a href="{{route('blog.category',$post->category)}}"> {{$post->category->name}}</a></li>
+                                            <li><i class="fa fa-tags"></i>{!! $post->html_tags !!}</li>
                                             <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
                                         </ul>
                                     </div>
