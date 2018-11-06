@@ -178,4 +178,21 @@ class Post extends Model
         $comment = $this->comments()->create($comment);
         return $comment;
     }
+
+    public function createTags($tagString)
+    {
+        $tags = explode(",", $tagString);
+        $tagIds = [];
+
+        foreach ($tags as $tag)
+        {
+            $newTag = Tag::firstOrCreate(
+                ['slug' => str_slug($tag)], ['name' => trim($tag)]
+            );
+
+            $tagIds[] = $newTag->id;
+        }
+
+        $this->tags()->sync($tagIds);
+    }
 }

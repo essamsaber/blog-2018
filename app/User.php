@@ -12,6 +12,7 @@ class User extends Authenticatable
 {
     use LaratrustUserTrait;
     use Notifiable;
+    protected $with = ['roles'];
 
     /**
      * The attributes that are mass assignable.

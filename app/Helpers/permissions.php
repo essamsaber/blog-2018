@@ -19,27 +19,33 @@ function check_user_permission($request, $action_name = NULL,$id = NULL)
     list($controller, $method) = explode('@', $current_action_name);
     $controller = str_replace(["App\\Http\\Controllers\\Backend\\", "Controller"],"",$controller);
     $controller = strtolower($controller);
-    $crud_permissions_map = [
-        'read' => ['index', 'show','view'],
-        'create' => ['create'],
-        'update' => ['edit', 'update','store'],
-        'delete' => ['delete', 'destroy', 'restore','forceDelete']
 
-    ];
-
-    foreach($crud_permissions_map as $permission => $methods) {
-        if(in_array($method, $methods)) {
-            $permission = "{$permission}-{$controller}";
-            if($controller === 'blog' && !empty($blog_id)) {
-                $blog = \App\Post::withTrashed()->find($blog_id);
-
-                if(!$current_user->hasPermission('update-others-blog') && $current_user->id != $blog->author_id) {
-                    return false;
-                }
+    $required_permission = "{$method}-{$controller}";
+    $roles = $current_user->roles;
+    $user_permissions=[];
+    foreach($roles as $role) {
+        $permissions = $role->permissions()->pluck('name');
+        foreach($permissions as $permission) {
+            if(!in_array($permission, $user_permissions)) {
+                $user_permissions[] = $permission;
             }
-            if(!$current_user->hasPermission($permission)) {
+        }
+    }
+    if(in_array($required_permission, $user_permissions)) {
+
+        if($controller === 'blog' && !empty($blog_id)) {
+            $blog = \App\Post::withTrashed()->find($blog_id);
+
+            if(!$current_user->hasPermission($required_permission) && $current_user->id != $blog->author_id) {
                 return false;
             }
+            if($current_user->id == $blog->author_id) {
+                return true;
+            }
+        }
+        if(!$current_user->hasPermission($required_permission)) {
+
+            return false;
         }
     }
     return true;

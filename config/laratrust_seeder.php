@@ -5,6 +5,7 @@ return [
         'superadministrator' => [
             'users' => 'c,r,u,d',
             'home' => 'c,r,u,d',
+            'blog' => 'c,r,u,d',
             'acl' => 'c,r,u,d',
             'profile' => 'r,u'
         ],
@@ -12,11 +13,13 @@ return [
             'users' => 'c,r,u,d',
             'profile' => 'r,u',
             'home' => 'c,r,u',
+            'blog' => 'c,r,u',
 
         ],
         'user' => [
             'profile' => 'r,u',
             'home' => 'r',
+            'blog' => 'r',
 
         ],
     ],
