@@ -30,7 +30,7 @@
                                             <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                             <li><i class="fa fa-file"></i><a href="{{route('blog.category',$post->category)}}"> {{$post->category->name}}</a></li>
                                             <li><i class="fa fa-tags"></i>{!! $post->html_tags !!}</li>
-                                            <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
+                                            <li><i class="fa fa-comments"></i><a href="{{$post->postUrl()}}#comments">{{$post->commentsCount()}}</a></li>
                                         </ul>
                                     </div>
                                     <div class="pull-right">
@@ -42,7 +42,7 @@
                     @endforeach
                     <nav>
                         <ul class="pager">
-                            {{$posts->append(request()->only(["term","month","year"]))->links()}}
+                            {{$posts->appends(request()->only(["term","month","year"]))->links()}}
                         </ul>
                     </nav>
                 @endif

@@ -19,3 +19,9 @@
         <strong>{{request('term')}}</strong>
     </div>
 @endif
+
+@if(session('success'))
+    <div class="alert alert-success">
+        <strong>{{session('success')}}</strong>
+    </div>
+@endif

@@ -17,6 +17,7 @@ Route::get('home', 'Backend\HomeController@index')->name('home');
 Route::get('logout', 'Auth\LoginController@logout');
 
 Route::get('{post}','BlogController@show')->name('blog.show');
+Route::post('{post}/comment','CommentsController@postComment')->name('blog.post-comment');
 Route::get('category/{category}','BlogController@category')->name('blog.category');
 Route::get('author/{author}', 'BlogController@author')->name('blog.author');
 Route::get('tag/{tag}', 'BlogController@tag')->name('blog.tag');

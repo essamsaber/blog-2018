@@ -13,7 +13,7 @@ class BlogController extends Controller
     protected $limit = 5;
     public function index()
     {
-        $posts = Post::with('author','category','tags')
+        $posts = Post::with('author','category','tags','comments')
             ->latestFirst()
             ->published()
             ->filter(request()->only(["term","month","year"]))
@@ -25,7 +25,8 @@ class BlogController extends Controller
 
     public function show(Post $post)
     {
-        return view('blog.show', compact('post'));
+        $comments = $post->comments()->latest()->paginate(5);
+        return view('blog.show', compact('post', 'comments'));
     }
 
     public function category(Category $category)

@@ -161,4 +161,21 @@ class Post extends Model
             ->orderByRaw('min(published_at) desc')
             ->get();
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function commentsCount()
+    {
+        $comments_count = $this->comments()->count();
+        return $comments_count. ' ' . str_plural('Comment', $comments_count);
+    }
+
+    public function storeComment($comment)
+    {
+        $comment = $this->comments()->create($comment);
+        return $comment;
+    }
 }
