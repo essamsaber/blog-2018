@@ -4,26 +4,17 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
+                @include('blog.messages')
                 @if(!$posts->count())
                     <div class="alert alert-warning">
                         No posts !
                     </div>
                 @else
-                    @if(isset($category_name))
-                       <div class="alert alert-info">
-                           <strong>{{$category_name}}</strong>
-                       </div>
-                    @endif
-                    @if(isset($author_name))
-                        <div class="alert alert-info">
-                            <strong>{{$author_name}}</strong>
-                        </div>
-                    @endif
                     @foreach($posts as $post)
                         <article class="post-item">
                             @if($post->image_url)
                                 <div class="post-item-image">
-                                    <img src="{{$post->image_url}}" alt="">
+                                    <img width="600" height="400" src="{{$post->image_url}}" alt="">
                                 </div>
                             @endif
                             <div class="post-item-body">
@@ -38,7 +29,8 @@
                                             <li><i class="fa fa-user"></i><a href="{{route('blog.author',$post->author)}}"> {{$post->author->name}}</a></li>
                                             <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                             <li><i class="fa fa-file"></i><a href="{{route('blog.category',$post->category)}}"> {{$post->category->name}}</a></li>
-                                            <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
+                                            <li><i class="fa fa-tags"></i>{!! $post->html_tags !!}</li>
+                                            <li><i class="fa fa-comments"></i><a href="{{$post->postUrl()}}#comments">{{$post->commentsCount()}}</a></li>
                                         </ul>
                                     </div>
                                     <div class="pull-right">
@@ -50,7 +42,7 @@
                     @endforeach
                     <nav>
                         <ul class="pager">
-                            {{$posts->links()}}
+                            {{$posts->appends(request()->only(["term","month","year"]))->links()}}
                         </ul>
                     </nav>
                 @endif

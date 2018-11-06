@@ -1,5 +1,6 @@
 @extends('backend.layouts.main')
 @section('title', 'Add new blog')
+
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">

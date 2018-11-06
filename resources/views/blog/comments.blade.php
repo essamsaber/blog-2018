@@ -1,97 +1,60 @@
-<article class="post-comments">
-    <h3><i class="fa fa-comments"></i> 5 Comments</h3>
+<article class="post-comments" id="comments">
+    <h3><i class="fa fa-comments"></i> {{$post->commentsCount()}}</h3>
 
     <div class="comment-body padding-10">
         <ul class="comments-list">
-            <li class="comment-item">
-                <div class="comment-heading clearfix">
-                    <div class="comment-author-meta">
-                        <h4>John Doe <small>January 14, 2016</small></h4>
+            @foreach($comments as $comment)
+                <li class="comment-item" id="comment-{{$comment->id}}">
+                    <div class="comment-heading clearfix">
+                        <div class="comment-author-meta">
+                            <h4>{{$comment->author_name}} <small>{{$comment->date}}</small></h4>
+                        </div>
                     </div>
-                </div>
-                <div class="comment-content">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio nesciunt nulla est, atque ratione nostrum cumque ducimus maxime, amet enim tempore ipsam. Id ea, veniam ipsam perspiciatis assumenda magnam doloribus!</p>
-                    <p>Quibusdam iusto culpa, necessitatibus, libero sequi quae commodi ea ab non facilis enim vitae inventore laborum hic unde esse debitis. Adipisci nostrum reprehenderit explicabo, non molestias aliquid quibusdam tempore. Vel.</p>
-                </div>
-            </li>
-
-            <li class="comment-item">
-                <div class="comment-heading clearfix">
-                    <div class="comment-author-meta">
-                        <h4>John Doe <small>January 14, 2016</small></h4>
+                    <div class="comment-content">
+                        <p>{!! $comment->html_body !!}</p>
                     </div>
-                </div>
-                <div class="comment-content">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio nesciunt nulla est, atque ratione nostrum cumque ducimus maxime, amet enim tempore ipsam. Id ea, veniam ipsam perspiciatis assumenda magnam doloribus!</p>
-                    <p>Quibusdam iusto culpa, necessitatibus, libero sequi quae commodi ea ab non facilis enim vitae inventore laborum hic unde esse debitis. Adipisci nostrum reprehenderit explicabo, non molestias aliquid quibusdam tempore. Vel.</p>
-
-                    <ul class="comments-list-children">
-                        <li class="comment-item">
-                            <div class="comment-heading clearfix">
-                                <div class="comment-author-meta">
-                                    <h4>John Doe <small>January 14, 2016</small></h4>
-                                </div>
-                            </div>
-                            <div class="comment-content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio nesciunt nulla est, atque ratione nostrum cumque ducimus maxime, amet enim tempore ipsam. Id ea, veniam ipsam perspiciatis assumenda magnam doloribus!</p>
-                                <p>Quibusdam iusto culpa, necessitatibus, libero sequi quae commodi ea ab non facilis enim vitae inventore laborum hic unde esse debitis. Adipisci nostrum reprehenderit explicabo, non molestias aliquid quibusdam tempore. Vel.</p>
-                            </div>
-                        </li>
-
-                        <li class="comment-item">
-                            <div class="comment-heading clearfix">
-                                <div class="comment-author-meta">
-                                    <h4>John Doe <small>January 14, 2016</small></h4>
-                                </div>
-                            </div>
-                            <div class="comment-content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio nesciunt nulla est, atque ratione nostrum cumque ducimus maxime, amet enim tempore ipsam. Id ea, veniam ipsam perspiciatis assumenda magnam doloribus!</p>
-                                <p>Quibusdam iusto culpa, necessitatibus, libero sequi quae commodi ea ab non facilis enim vitae inventore laborum hic unde esse debitis. Adipisci nostrum reprehenderit explicabo, non molestias aliquid quibusdam tempore. Vel.</p>
-
-                                <ul class="comments-list-children">
-                                    <li class="comment-item">
-                                        <div class="comment-heading clearfix">
-                                            <div class="comment-author-meta">
-                                                <h4>John Doe <small>January 14, 2016</small></h4>
-                                            </div>
-                                        </div>
-                                        <div class="comment-content">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio nesciunt nulla est, atque ratione nostrum cumque ducimus maxime, amet enim tempore ipsam. Id ea, veniam ipsam perspiciatis assumenda magnam doloribus!</p>
-                                            <p>Quibusdam iusto culpa, necessitatibus, libero sequi quae commodi ea ab non facilis enim vitae inventore laborum hic unde esse debitis. Adipisci nostrum reprehenderit explicabo, non molestias aliquid quibusdam tempore. Vel.</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+                </li>
+            @endforeach
         </ul>
-
+        {{$comments->appends(request()->query('post'))->links()}}
     </div>
 
     <div class="comment-footer padding-10">
         <h3>Leave a comment</h3>
-        <form>
-            <div class="form-group required">
+      <form method="POST" action="{{route('blog.post-comment', $post->slug)}}">
+          {{csrf_field()}}
+          {{method_field('POST')}}
+            <div class="form-group required {{$errors->has('author_name') ? 'has-error' : ''}}">
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name" class="form-control">
+                <input required type="text" name="author_name" id="name" class="form-control">
+                @if($errors->has('author_name'))
+                    <span class="has-block">
+                        <strong>{{$errors->first('author_name')}}</strong>
+                    </span>
+                @endif
             </div>
-            <div class="form-group required">
+            <div class="form-group required {{$errors->has('author_email') ? 'has-error' : ''}}">
                 <label for="email">Email</label>
-                <input type="text" name="email" id="email" class="form-control">
+                <input required type="text" name="author_email" id="email" class="form-control">
+                @if($errors->has('author_email'))
+                    <span class="has-block">
+                        <strong>{{$errors->first('author_email')}}</strong>
+                    </span>
+                @endif
             </div>
-            <div class="form-group">
-                <label for="website">Website</label>
-                <input type="text" name="website" id="website" class="form-control">
-            </div>
-            <div class="form-group required">
+
+            <div class="form-group required {{$errors->has('body') ? 'has-error' : ''}}">
                 <label for="comment">Comment</label>
-                <textarea name="comment" id="comment" rows="6" class="form-control"></textarea>
+                <textarea required name="body" id="comment" rows="6" class="form-control"></textarea>
+                @if($errors->has('body'))
+                    <span class="has-block">
+                        <strong>{{$errors->first('body')}}</strong>
+                    </span>
+                @endif
             </div>
             <div class="clearfix">
                 <div class="pull-left">
-                    <button type="submit" class="btn btn-lg btn-success">Submit</button>
+                    <input type="submit" class="btn btn-lg btn-success" value="Comment">
                 </div>
                 <div class="pull-right">
                     <p class="text-muted">

@@ -5,6 +5,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
+                @include('blog.messages')
+
                 <article class="post-item post-detail">
                     @if($post->image_url)
                         <div class="post-item-image">
@@ -22,7 +24,8 @@
                                     <li><i class="fa fa-user"></i><a href="{{route('blog.author', $author)}}"> {{$author->name}}</a></li>
                                     <li><i class="fa fa-clock-o"></i><time> {{$post->date}}</time></li>
                                     <li><i class="fa fa-folder"></i><a href="#"> {{$post->category->name}}</a></li>
-                                    <li><i class="fa fa-comments"></i><a href="#">4 Comments</a></li>
+                                    <li><i class="fa fa-tags"></i>{!! $post->html_tags !!}</li>
+                                    <li><i class="fa fa-comments"></i><a href="#comments">{{$post->commentsCount()}}</a></li>
                                 </ul>
                             </div>
                             {!! $post->body_html !!}
@@ -53,6 +56,7 @@
                 </article>
 
                {{--Comments here--}}
+                @include('blog.comments')
             </div>
             @include('layouts.sidebar')
         </div>

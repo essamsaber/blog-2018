@@ -26,28 +26,29 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         $allPosts = TRUE;
+        $postCount = Post::query();
         if( $request->status && $request->status == 'trashed') {
             $allPosts = false;
             $posts = Post::onlyTrashed()->with('author','category')->latest()->paginate($this->limit);
-            $postCount = Post::count();
+            $postCount->count();
         } else if($request->status && $request->status == 'scheduled'){
             $posts = Post::scheduled()->with('author','category')->latest()->paginate($this->limit);
-            $postCount = Post::scheduled()->count();
+            $postCount = $postCount->scheduled()->count();
         }
         else if($request->status && $request->status == 'own'){
             $posts = $request->user()->posts()->latest()->paginate($this->limit);
-            $postCount = Post::scheduled()->count();
+            $postCount =  $postCount->scheduled()->count();
         }
         else if($request->status && $request->status == 'published'){
             $posts = Post::published()->with('author','category')->latest()->paginate($this->limit);
-            $postCount = Post::published()->count();
+            $postCount =  $postCount->published()->count();
         }
         else if($request->status && $request->status == 'draft'){
             $posts = Post::draft()->with('author','category')->latest()->paginate($this->limit);
-            $postCount = Post::draft()->count();
+            $postCount =  $postCount->draft()->count();
         } else {
             $posts = Post::with('author','category')->latest()->paginate($this->limit);
-            $postCount = Post::count();
+            $postCount = $postCount->count();
         }
         $filterLists = $this->filtersList($request);
 
@@ -74,7 +75,8 @@ class BlogController extends Controller
     public function store(PostRequest $request)
     {
         $data = $this->handleRequest($request);
-        $request->user()->posts()->create($data);
+        $new_post = $request->user()->posts()->create($data);
+        $new_post->createTags($data["post_tags"]);
         return redirect()->route('backend.blog.index')->with('success', 'The blog has been added successfully');
     }
 
@@ -119,6 +121,8 @@ class BlogController extends Controller
         if($old_image != $post->image) {
             $this->deleteImage($old_image);
         }
+        $post->createTags($data["post_tags"]);
+
         return redirect()
             ->route('backend.blog.index')
             ->with('success', 'The blog has been updated successfully');

@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,7 @@ class LaratrustSeeder extends Seeder
         $config = config('laratrust_seeder.role_structure');
         $userPermission = config('laratrust_seeder.permission_structure');
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
-
+        $controllers = $this->getFullQualifiedControllersNames();
         foreach ($config as $key => $modules) {
 
             // Create a new role
@@ -27,81 +28,39 @@ class LaratrustSeeder extends Seeder
                 'display_name' => ucwords(str_replace('_', ' ', $key)),
                 'description' => ucwords(str_replace('_', ' ', $key))
             ]);
-            $permissions = [];
 
-            $this->command->info('Creating Role '. strtoupper($key));
+            $this->command->info('Creating Role ' . strtoupper($key));
 
-            // Reading role permission modules
-            foreach ($modules as $module => $value) {
-
-                foreach (explode(',', $value) as $p => $perm) {
-
-                    $permissionValue = $mapPermission->get($perm);
-
-                    $permissions[] = \App\Permission::firstOrCreate([
-                        'name' => $permissionValue . '-' . $module,
-                        'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
-                        'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
-                    ])->id;
-
-                    $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
-                }
-            }
-
-            // Attach all permissions to the role
-            $role->permissions()->sync($permissions);
-
-            $this->command->info("Creating '{$key}' user");
-
-            // Create default user for each role
             $name = ucwords(str_replace('_', ' ', $key));
-            $user = \App\User::create([
 
+            $user = \App\User::create([
                 'name' => $name,
-                'email' => $key.'@app.com',
+                'email' => $key . '@app.com',
                 'password' => bcrypt('password'),
-                'slug' => str_slug($name)
+                'slug' => str_slug($key)
             ]);
 
-            $user->attachRole($role);
+
         }
+        $permissions = [];
 
-        // Creating user with permissions
-        if (!empty($userPermission)) {
-
-            foreach ($userPermission as $key => $modules) {
-                $name = ucwords(str_replace('_', ' ', $key));
-
-                foreach ($modules as $module => $value) {
-
-                    // Create default user for each permission set
-                    $user = \App\User::create([
-                        'name' => $name,
-                        'email' => $key.'@app.com',
-                        'slug' => str_slug($name),
-                        'password' => bcrypt('password'),
-                        'remember_token' => str_random(10),
-                    ]);
-                    $permissions = [];
-
-                    foreach (explode(',', $value) as $p => $perm) {
-
-                        $permissionValue = $mapPermission->get($perm);
-
-                        $permissions[] = \App\Permission::firstOrCreate([
-                            'name' => $permissionValue . '-' . $module,
-                            'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
-                            'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
-                        ])->id;
-
-                        $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
-                    }
-                }
-
-                // Attach all permissions to the user
-                $user->permissions()->sync($permissions);
-            }
+        foreach ($controllers as $controller) {
+            $c = strtolower(str_replace(["App\\Http\\Controllers\\Backend\\", "Controller"], "", $controller));
+            list($controller_name, $action) = explode('@', $c);
+            $permission =   $action. '-' .$controller_name;
+            $permissions[] = \App\Permission::firstOrCreate([
+                'name' => $permission,
+                'display_name' => ucfirst($action) . ' ' . ucfirst($controller_name),
+                'description' => ucfirst($action) . ' ' . ucfirst($controller_name),
+            ])->id;
         }
+        // Attach all permissions to the role
+        $role = \App\Role::where('name', 'superadministrator')->first();
+        $role->permissions()->sync($permissions);
+        $user = \App\User::first();
+        $user->roles()->sync($role);
+
+        // Create default user for each role
     }
 
     /**
@@ -119,5 +78,21 @@ class LaratrustSeeder extends Seeder
         \App\Role::truncate();
         \App\Permission::truncate();
         Schema::enableForeignKeyConstraints();
+    }
+
+    private function getFullQualifiedControllersNames(): array
+    {
+        $controllers = [];
+        foreach (\Route::getRoutes()->getRoutes() as $route) {
+            $action = $route->getAction();
+            if (array_key_exists('controller', $action)) {
+                // You can also use explode('@', $action['controller']); here
+                // to separate the class name from the method
+                if(strpos($action['controller'], 'Backend')) {
+                    $controllers[] = $action['controller'];
+                }
+            }
+        };
+        return $controllers;
     }
 }
