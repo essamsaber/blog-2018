@@ -42,7 +42,7 @@
                     @endforeach
                     <nav>
                         <ul class="pager">
-                            {{$posts->links()}}
+                            {{$posts->append(request()->only(["term","month","year"]))->links()}}
                         </ul>
                     </nav>
                 @endif

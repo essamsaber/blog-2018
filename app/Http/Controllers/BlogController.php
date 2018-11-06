@@ -16,10 +16,12 @@ class BlogController extends Controller
         $posts = Post::with('author','category','tags')
             ->latestFirst()
             ->published()
-            ->filter(request("term"))
+            ->filter(request()->only(["term","month","year"]))
             ->simplePaginate($this->limit);
         return view('blog.index', compact('posts','categories'));
     }
+
+
 
     public function show(Post $post)
     {

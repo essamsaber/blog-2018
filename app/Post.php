@@ -119,15 +119,23 @@ class Post extends Model
         return $query->where('published_at', '>', Carbon::now());
     }
 
-    public function scopeFilter($query, $term)
+    public function scopeFilter($query, $request)
     {
-        if ($term) {
-            return $query->where(function ($q) use ($term) {
+        if (isset($request['term']) && $term = $request['term']) {
+            $query->where(function ($q) use ($request, $term) {
                 $q->orWhere("title", "LIKE", "%{$term}%");
             })
-            ->where(function ($q) use ($term) {
+            ->where(function ($q) use ($request, $term) {
                 $q->orWhere("excerpt", "LIKE" < "%{$term}%");
             });
+        }
+
+        if (isset($request['month']) && $month = $request['month']) {
+            $query->whereRaw('month(published_at) = ?', [Carbon::parse($month)->month]);
+        }
+
+        if (isset($request['year']) && $year = $request['year']) {
+            $query->whereRaw('year(published_at) = ?', $year);
         }
     }
 
@@ -143,5 +151,14 @@ class Post extends Model
             $html[] = '<a href="#">'.$tag->name.'</a>';
         }
         return implode(', ',$html);
+    }
+
+    public static function archives()
+    {
+        return self::published()
+            ->selectRaw('count(id) as post_count, year(published_at) year, monthname(published_at) month')
+            ->groupBy('year', 'month')
+            ->orderByRaw('min(published_at) desc')
+            ->get();
     }
 }

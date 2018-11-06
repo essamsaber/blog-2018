@@ -21,6 +21,7 @@ class SidebarComposer
         $this->composeCategories($view);
         $this->composePopularPosts($view);
         $this->composeTags($view);
+        $this->composeArchives($view);
     }
 
     private function composeCategories($view)
@@ -43,5 +44,11 @@ class SidebarComposer
     {
         $tags = Tag::has('posts')->get();
         $view->with('tags', $tags);
+    }
+
+    private function composeArchives($view)
+    {
+        $archives = Post::archives();
+        $view->with('archives', $archives);
     }
 }
